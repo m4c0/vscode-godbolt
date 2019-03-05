@@ -1,5 +1,7 @@
 const vscode = require('vscode');
+const http = require('http');
 const https = require('https');
+const url = require('url');
 
 class Compiler extends vscode.Disposable {
 	constructor() {
@@ -35,16 +37,21 @@ class Compiler extends vscode.Disposable {
 	}
 }
 
-function download(opts, post) {
+function download(url, opts, post) {
 	return new Promise((c, e) => {
 		var content = '';
-		let req = https.request({
+		let client = (url.protocol === 'https:') ? https : http;
+		let req = client.request(url, {
 			headers: {
 				'Accept': 'application/json',
 				'Content-Type': 'application/json'
 			},
 			...opts
 		}, resp => {
+			if (resp.statusCode != 200) {
+				e("Invalid combination of parameters");
+				return;
+			}
 			resp
 				.on('data', data => { content += data.toString() })
 				.on('end', () => { c(JSON.parse(content)) })
@@ -70,16 +77,16 @@ module.exports = {
 			provideTextDocumentContent: async (uri) => {
 				o.clear();
 
+				let config = vscode.workspace.getConfiguration('compilerExplorer');
+				let godboltUrl = new url.URL('/api/compiler/' + config.get('compiler') + '/compile', config.get('baseUrl'));
+				
 				let doc = await vscode.workspace.openTextDocument(uri.path.replace(/.asm$/, ''));
-				let resp = await download({
-					hostname: 'godbolt.org',
-					port: 443,
-					path: '/api/compiler/g83/compile',
+				let resp = await download(godboltUrl, {
 					method: 'POST'
 				}, {
 					source: doc.getText(),
 					options: {
-						userArguments: '-O2 -std=c++17',
+						userArguments: config.get('flags'),
 						filters: {
 							labels: true,
 							intel: true,
@@ -88,7 +95,7 @@ module.exports = {
 							comments: true,
 						}
 					}
-				});
+				}).catch(msg => vscode.window.showErrorMessage(msg));
 
 				resp.stderr.forEach(x => {
 					// thanks Qix, http://stackoverflow.com/questions/25245716/remove-all-ansi-colors-styles-from-strings
@@ -96,7 +103,7 @@ module.exports = {
 				});
 				if (resp.stderr.length > 0) o.show(true);
 
-				return "# Compilation provided by Compiler Explorer at godbolt.org\n" + resp.asm.map(x => x.text).join('\n');
+				return "# Compilation provided by Compiler Explorer at " + godboltUrl.hostname + "\n" + resp.asm.map(x => x.text).join('\n');
 			}
 		}));
 	},

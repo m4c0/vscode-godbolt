@@ -10,6 +10,12 @@ Currently, when you open a CPP file, a button appear at the editor's top right c
 
 > Note: This extension does not provide C++ support or ASM syntax highlighting, and it won't do it, since there are better extensions out there to do this job.
 
+It supports, via settings:
+
+* Use a different endpoint (ex: a local instance)
+* Change the compiler
+* Set compiler flags
+
 ## Requirements
 
 You need extra extensions for dealing with C++ and Assembly files.
@@ -18,11 +24,14 @@ You need extra extensions for dealing with C++ and Assembly files.
 
 This is the bare minimal to prove it can work, so there's a lot of room for improvement:
 
-* Select the compiler (currently fixed to GCC 8.3)
 * Select filters (ex: Intel, demangle, etc)
-* Change the compiler flags
-* Settings for the endpoint (ex: if you want to use a local instance)
 * Enable compile-on-save
+
+These are available via settings, requiring a UI to be more productive:
+
+* Select the compiler
+* Change the compiler flags
+* Defining the endpoint (ex: if you want to use a local instance)
 
 Some features would be more than desired, but they are probably not easy to achieve:
 
