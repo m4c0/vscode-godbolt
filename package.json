@@ -27,10 +27,16 @@
 	"contributes": {
 		"commands": [{
 			"command": "extension.compileInCompilerExplorer",
-			"title": "Compiler Explorer: Compile"
+			"title": "Compile",
+			"category": "Compiler Explorer",
+			"icon": {
+				"light": "./icon.svg",
+				"dark": "./icon.svg"
+			}
 		}, {
 			"command": "extension.selectCompiler",
-			"title": "Compiler Explorer: Select the compiler to use"
+			"title": "Select the compiler to use",
+			"category": "Compiler Explorer"
 		}],
 		"configuration": [{
 			"title": "Compiler Explorer configuration",
