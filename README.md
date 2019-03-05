@@ -26,6 +26,8 @@ This is the bare minimal to prove it can work, so there's a lot of room for impr
 
 * Select filters (ex: Intel, demangle, etc)
 * Enable compile-on-save
+* Use CodeLens as an alternative to the side panel
+* Automatically highlight asm/c++ depending on the cursor on the opposite panel
 
 These are available via settings, requiring a UI to be more productive:
 
