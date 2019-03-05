@@ -37,11 +37,13 @@ class Compiler extends vscode.Disposable {
 	}
 }
 
-function download(url, opts, post) {
+function download(path, opts, post) {
+	let config = vscode.workspace.getConfiguration('compilerExplorer');
+	let godboltUrl = new url.URL(path, config.get('baseUrl'));
 	return new Promise((c, e) => {
 		var content = '';
-		let client = (url.protocol === 'https:') ? https : http;
-		let req = client.request(url, {
+		let client = (godboltUrl.protocol === 'https:') ? https : http;
+		let req = client.request(godboltUrl, {
 			headers: {
 				'Accept': 'application/json',
 				'Content-Type': 'application/json'
@@ -62,6 +64,34 @@ function download(url, opts, post) {
 	})
 }
 
+function selectCompiler() {
+	let config = vscode.workspace.getConfiguration('compilerExplorer');
+	let current = config.get('compiler');
+	return vscode.window.showQuickPick(download('/api/compilers/c++').then(list => {
+		return list.map(item => {
+			return {
+				id: item.id,
+				label: item.name,
+				picked: item.id === current,
+			};
+		}).sort((a, b) => a.label.localeCompare(b.label));
+	}), {
+		canPickMany: false
+	}).then(x => {
+		if (!x) return;
+
+		let all = config.inspect('compiler');
+		// This smells like we are doing something wrong here...
+		if (all.workspaceFolderValue) {
+			config.update('compiler', x.id, vscode.ConfigurationTarget.WorkspaceFolder);
+		} else if (all.workspaceValue) {
+			config.update('compiler', x.id, vscode.ConfigurationTarget.Workspace);
+		} else {
+			config.update('compiler', x.id, vscode.ConfigurationTarget.Global);
+		}
+	});
+}
+
 module.exports = {
 	activate: ({ subscriptions }) => {
 		let c = new Compiler();
@@ -72,16 +102,16 @@ module.exports = {
 		subscriptions.push(c);
 		subscriptions.push(o);
 		subscriptions.push(vscode.commands.registerCommand('extension.compileInCompilerExplorer', c.compile, c));
+		subscriptions.push(vscode.commands.registerCommand('extension.selectCompiler', selectCompiler));
 		subscriptions.push(vscode.workspace.registerTextDocumentContentProvider('godbolt', {
 			onDidChange: c.eventEmitter.event,
 			provideTextDocumentContent: async (uri) => {
 				o.clear();
 
 				let config = vscode.workspace.getConfiguration('compilerExplorer');
-				let godboltUrl = new url.URL('/api/compiler/' + config.get('compiler') + '/compile', config.get('baseUrl'));
 				
 				let doc = await vscode.workspace.openTextDocument(uri.path.replace(/.asm$/, ''));
-				let resp = await download(godboltUrl, {
+				let resp = await download('/api/compiler/' + config.get('compiler') + '/compile', {
 					method: 'POST'
 				}, {
 					source: doc.getText(),
@@ -103,7 +133,11 @@ module.exports = {
 				});
 				if (resp.stderr.length > 0) o.show(true);
 
-				return "# Compilation provided by Compiler Explorer at " + godboltUrl.hostname + "\n" + resp.asm.map(x => x.text).join('\n');
+				return (
+					"# Compilation provided by Compiler Explorer at " + config.get('baseUrl') + "\n" + 
+					"# Options: Compiler = " + config.get('compiler') + "\n" +
+					resp.asm.map(x => x.text).join('\n')
+				);
 			}
 		}));
 	},

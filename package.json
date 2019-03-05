@@ -21,12 +21,16 @@
 	"categories": [ "Other" ],
 
 	"activationEvents": [
-		"onLanguage:cpp"
+		"onLanguage:cpp",
+		"onCommand:extension.selectCompiler"
 	],
 	"contributes": {
 		"commands": [{
 			"command": "extension.compileInCompilerExplorer",
-			"title": "Compile in Compiler Explorer"
+			"title": "Compiler Explorer: Compile"
+		}, {
+			"command": "extension.selectCompiler",
+			"title": "Compiler Explorer: Select the compiler to use"
 		}],
 		"configuration": [{
 			"title": "Compiler Explorer configuration",
