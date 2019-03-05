@@ -4,7 +4,7 @@ This project is Alpha, but the most important feature is alredy available: you c
 
 ## Features
 
-Currently, when you open a CPP file, a button appear at the editor's top right corner. That button triggers a compile using [Compiler Explorer at godbolt.org](https://godbolt.org), opening the result in a side editor and showing errors in the "Output" tab.
+Currently, when you open a CPP file, a button appear at the editor's top right corner. That button triggers a compile using [Compiler Explorer at godbolt.org](https://godbolt.org), opening the result in a side editor and showing errors in the "Output" tab. After opening the tab, it automatically updates the compiled code as you type.
 
 ![First version](v0.0.1.gif)
 
@@ -25,7 +25,7 @@ You need extra extensions for dealing with C++ and Assembly files.
 This is the bare minimal to prove it can work, so there's a lot of room for improvement:
 
 * Select filters (ex: Intel, demangle, etc)
-* Enable compile-on-save
+* Setup the interval for compile-on-edit
 * Use CodeLens as an alternative to the side panel
 * Automatically highlight asm/c++ depending on the cursor on the opposite panel
 

@@ -30,10 +30,25 @@ class Compiler extends vscode.Disposable {
 			preview: true,
 			viewColumn: vscode.ViewColumn.Beside
 		});
+
+		if (this.timer) {
+			clearTimeout(this.timer);
+			this.timer = undefined;
+		}
 	}
 
+	onDidChangeTextDocument(evt) {
+		let uri = evt.document.uri;
+		if (!this.documents[uri.path]) {
+			return;
+		}
+		if (this.timer) {
+			return;
+		}
+		this.timer = setTimeout(() => this.compile(uri), 2000);
+	}
 	onDidCloseTextDocument(doc) {
-		delete this.editors[doc.path];
+		delete this.documents[doc.uri.path];
 	}
 }
 
@@ -97,6 +112,7 @@ module.exports = {
 		let c = new Compiler();
 		let o = vscode.window.createOutputChannel("Compiler Explorer");
 
+		vscode.workspace.onDidChangeTextDocument(c.onDidChangeTextDocument, c);
 		vscode.workspace.onDidCloseTextDocument(c.onDidCloseTextDocument, c);
 
 		subscriptions.push(c);
