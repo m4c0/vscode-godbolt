@@ -2,6 +2,8 @@
 
 This project is Alpha, but the most important feature is alredy available: you can see the assembly output of the compilation of a CPP file.
 
+**Note: This might not be working anymore. The only maintainance done recently was dependency upgrades to resolve security issues**
+
 ## Features
 
 Currently, when you open a CPP file, a button appear at the editor's top right corner. That button triggers a compile using [Compiler Explorer at godbolt.org](https://godbolt.org), opening the result in a side editor and showing errors in the "Output" tab. After opening the tab, it automatically updates the compiled code as you type.

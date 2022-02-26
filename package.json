@@ -3,71 +3,78 @@
 	"displayName": "Compiler Explorer",
 	"description": "Integrates Matt Godbolt's Compiler Explorer into VSCode",
 	"version": "0.0.1",
-	"scripts": {
-		"postinstall": "node ./node_modules/vscode/bin/install",
-		"test": "node ./node_modules/vscode/bin/test"
-	},
+	"scripts": {},
 	"devDependencies": {
-		"typescript": "^3.3.1",
-		"vscode": "^1.1.28",
-		"eslint": "^5.13.0",
+		"@types/mocha": "^2.2.42",
 		"@types/node": "^10.12.21",
-		"@types/mocha": "^2.2.42"
+		"@types/vscode": "^1.32.0",
+		"eslint": "^5.13.0",
+		"typescript": "^3.3.1"
 	},
-
 	"main": "./extension.js",
-
-	"engines": { "vscode": "^1.31.0" },
-	"categories": [ "Other" ],
-
+	"engines": {
+		"vscode": "^1.32.0"
+	},
+	"categories": [
+		"Other"
+	],
 	"activationEvents": [
 		"onLanguage:cpp",
 		"onCommand:extension.selectCompiler"
 	],
 	"contributes": {
-		"commands": [{
-			"command": "extension.compileInCompilerExplorer",
-			"title": "Compile",
-			"category": "Compiler Explorer",
-			"icon": {
-				"light": "./icon.svg",
-				"dark": "./icon.svg"
+		"commands": [
+			{
+				"command": "extension.compileInCompilerExplorer",
+				"title": "Compile",
+				"category": "Compiler Explorer",
+				"icon": {
+					"light": "./icon.svg",
+					"dark": "./icon.svg"
+				}
+			},
+			{
+				"command": "extension.selectCompiler",
+				"title": "Select the compiler to use",
+				"category": "Compiler Explorer"
 			}
-		}, {
-			"command": "extension.selectCompiler",
-			"title": "Select the compiler to use",
-			"category": "Compiler Explorer"
-		}],
-		"configuration": [{
-			"title": "Compiler Explorer configuration",
-			"properties": {
-				"compilerExplorer.baseUrl": {
-					"type": "string",
-					"default": "https://godbolt.org",
-					"description": "Base URL for the Compiler Explorer instance to be used"
-				},
-				"compilerExplorer.compiler": {
-					"type": "string",
-					"default": "g83",
-					"description": "C++ compiler ID to use"
-				},
-				"compilerExplorer.flags": {
-					"type": "string",
-					"default": "",
-					"description": "C++ compilation flags to use"
+		],
+		"configuration": [
+			{
+				"title": "Compiler Explorer configuration",
+				"properties": {
+					"compilerExplorer.baseUrl": {
+						"type": "string",
+						"default": "https://godbolt.org",
+						"description": "Base URL for the Compiler Explorer instance to be used"
+					},
+					"compilerExplorer.compiler": {
+						"type": "string",
+						"default": "g83",
+						"description": "C++ compiler ID to use"
+					},
+					"compilerExplorer.flags": {
+						"type": "string",
+						"default": "",
+						"description": "C++ compilation flags to use"
+					}
 				}
 			}
-		}],
+		],
 		"menus": {
-			"commandPalette": [{
-				"command": "extension.compileInCompilerExplorer",
-				"when": "editorLangId == cpp"
-			}],
-			"editor/title": [{
-				"command": "extension.compileInCompilerExplorer",
-				"group": "navigation",
-				"when": "editorLangId == cpp"
-			}]
+			"commandPalette": [
+				{
+					"command": "extension.compileInCompilerExplorer",
+					"when": "editorLangId == cpp"
+				}
+			],
+			"editor/title": [
+				{
+					"command": "extension.compileInCompilerExplorer",
+					"group": "navigation",
+					"when": "editorLangId == cpp"
+				}
+			]
 		}
 	}
 }
